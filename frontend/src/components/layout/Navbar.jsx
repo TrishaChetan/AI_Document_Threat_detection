@@ -6,7 +6,7 @@ function Navbar() {
             <div>
                 <h1 className="text-xl font-bold flex items-center gap-2">
                     <FaShieldAlt className="text-green-500" />
-                    Guardex AI
+                    Security AI
                 </h1>
 
                 <p className="text-sm text-slate-400">

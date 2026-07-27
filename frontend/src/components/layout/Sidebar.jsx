@@ -32,7 +32,7 @@ function Sidebar() {
         <aside className="w-64 bg-slate-900 border-r border-slate-800">
             <div className="p-6">
                 <h2 className="text-2xl font-bold text-green-400">
-                    GUARDEX
+                    SECURITY AI
                 </h2>
             </div>
 
