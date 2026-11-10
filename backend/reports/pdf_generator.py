@@ -84,7 +84,7 @@ class PDFGenerator:
                 ["Target", report.get("target", "N/A")],
                 ["Generated On", report.get("generated_at", "N/A")],
                 ["Report ID", report_id],
-                ["Risk Score", f"{score}/100"],
+                ["Risk Score", f"{score}/100" + (f" ({risk['rating']})" if risk.get("rating") else "")],
                 ["Classification", "CONFIDENTIAL"],
             ],
             colWidths=[2.2 * inch, 4 * inch],

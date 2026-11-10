@@ -10,7 +10,7 @@ Security AI takes vulnerability scan reports (XML format, e.g. from OWASP ZAP), 
 
 - **Upload & Parse** — Upload XML vulnerability scan reports for automatic parsing
 - **AI-Powered Analysis** — Uses an LLM (via NVIDIA's API) to generate contextual recommendations for each finding
-- **Risk Scoring** — Calculates an overall risk score per scan
+- **Risk Scoring** — 0–100 score plus a Critical/High/Medium/Low rating. The worst finding sets a floor and extra findings add risk with diminishing returns, so scores stay comparable instead of all hitting 100
 - **PDF Reports** — Auto-generates a downloadable PDF summary of each scan
 - **Scan History** — View, retrieve, and delete past scans
 - **Dashboard Stats** — Knowledge base statistics and scan summaries at a glance
@@ -115,6 +115,17 @@ npm run dev
 Frontend runs at `http://localhost:5173`
 
 ---
+
+## Running Tests
+
+From the repository root:
+
+```bash
+pip install pytest
+pytest tests
+```
+
+`tests/conftest.py` puts `backend/` on the import path. Scripts that call the NVIDIA API run only when `NVIDIA_API_KEY` is set, and the batch scripts run only when `backend/temp_uploads/` exists.
 
 ## API Endpoints
 
