@@ -7,8 +7,9 @@ function UploadBox({ file, setFile }) {
     const handleFile = (selectedFile) => {
         if (!selectedFile) return;
 
-        if (!selectedFile.name.toLowerCase().endsWith(".xml")) {
-            alert("Only XML files are supported.");
+        const name = selectedFile.name.toLowerCase();
+        if (!name.endsWith(".xml") && !name.endsWith(".json")) {
+            alert("Only OWASP ZAP .xml or .json reports are supported.");
             return;
         }
 
@@ -31,7 +32,7 @@ function UploadBox({ file, setFile }) {
                 ref={inputRef}
                 type="file"
                 hidden
-                accept=".xml"
+                accept=".xml,.json"
                 onChange={(e) => handleFile(e.target.files[0])}
             />
 
@@ -42,7 +43,7 @@ function UploadBox({ file, setFile }) {
                 />
 
                 <h2 className="text-2xl font-bold">
-                    Drag & Drop XML Scan
+                    Drag & Drop ZAP Report (XML or JSON)
                 </h2>
 
                 <p className="text-slate-400">

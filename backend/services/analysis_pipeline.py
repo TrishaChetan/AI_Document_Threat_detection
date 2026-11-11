@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from ai.recommendation_engine import RecommendationEngine
 from database.scan_repository import scan_repository
-from parsers.xml_parser import XMLParser
+from parsers import parse_report
 from reports.pdf_generator import PDFGenerator
 from reports.report_builder import ReportBuilder
 from schemas.enhanced_vulnerability import EnhancedVulnerability
@@ -18,8 +18,7 @@ class AnalysisPipeline:
 
     def run(self, file_path: Path):
 
-        parser = XMLParser(str(file_path))
-        scan = parser.parse()
+        scan = parse_report(file_path)
 
         ai_results = []
         enhanced_vulnerabilities = []

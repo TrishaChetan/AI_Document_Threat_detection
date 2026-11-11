@@ -14,7 +14,7 @@ function Upload() {
 
     const handleUpload = async () => {
         if (!file) {
-            toast.error("Please select an XML file.");
+            toast.error("Please select a ZAP .xml or .json report.");
             return;
         }
 
@@ -52,7 +52,7 @@ function Upload() {
                 </h1>
 
                 <p className="text-slate-400 mt-2">
-                    Upload an OWASP ZAP XML report for AI-powered analysis.
+                    Upload an OWASP ZAP report (XML or JSON) for AI-powered analysis.
                 </p>
             </div>
 

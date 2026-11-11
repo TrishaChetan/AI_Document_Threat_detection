@@ -2,13 +2,13 @@
 
 **AI-Powered Web Vulnerability Assessment Platform**
 
-Security AI takes vulnerability scan reports (XML format, e.g. from OWASP ZAP), parses them, uses an AI model to generate risk analysis and remediation recommendations, and produces a downloadable PDF report — all through a web dashboard.
+Security AI takes vulnerability scan reports (OWASP ZAP XML or JSON reports), parses them, uses an AI model to generate risk analysis and remediation recommendations, and produces a downloadable PDF report — all through a web dashboard.
 
 ---
 
 ## Features
 
-- **Upload & Parse** — Upload XML vulnerability scan reports for automatic parsing
+- **Upload & Parse** — Upload OWASP ZAP reports in XML or JSON (`zap-baseline.py -x`/`-J`). Findings from every scanned site in the report are included
 - **AI-Powered Analysis** — Uses an LLM (via NVIDIA's API) to generate contextual recommendations for each finding
 - **Risk Scoring** — 0–100 score plus a Critical/High/Medium/Low rating. The worst finding sets a floor and extra findings add risk with diminishing returns, so scores stay comparable instead of all hitting 100
 - **PDF Reports** — Auto-generates a downloadable PDF summary of each scan
@@ -43,7 +43,7 @@ Security AI takes vulnerability scan reports (XML format, e.g. from OWASP ZAP), 
 │   ├── api/             # FastAPI routes (scan, upload, stats)
 │   ├── data/            # Knowledge base data
 │   ├── database/        # DB connection & scan repository
-│   ├── parsers/         # XML report parsing
+│   ├── parsers/         # ZAP XML + JSON report parsing
 │   ├── reports/         # PDF report generation
 │   ├── schemas/         # Pydantic models
 │   ├── services/        # Core scan/analysis pipeline
@@ -132,7 +132,7 @@ pytest tests
 | Method | Endpoint                  | Description                       |
 |--------|----------------------------|------------------------------------|
 | GET    | `/api/v1/health`           | Health check                       |
-| POST   | `/api/v1/scan`             | Upload XML report & run analysis   |
+| POST   | `/api/v1/scan`             | Upload ZAP XML/JSON report & run analysis |
 | GET    | `/api/v1/scans`            | Get all past scans                 |
 | GET    | `/api/v1/scans/{scan_id}`  | Get a specific scan                |
 | DELETE | `/api/v1/scans/{scan_id}`  | Delete a scan                      |

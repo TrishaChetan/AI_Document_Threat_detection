@@ -3,7 +3,7 @@ import shutil
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
-from parsers.xml_parser import XMLParser
+from parsers import SUPPORTED_EXTENSIONS, get_parser
 
 router = APIRouter(
     prefix="/upload",
@@ -26,10 +26,10 @@ async def upload_xml(file: UploadFile = File(...)):
             detail="No file was uploaded."
         )
 
-    if not file.filename.lower().endswith(".xml"):
+    if not file.filename.lower().endswith(SUPPORTED_EXTENSIONS):
         raise HTTPException(
             status_code=400,
-            detail="Only XML files are allowed."
+            detail="Only OWASP ZAP .xml or .json reports are supported."
         )
 
     filename = os.path.basename(file.filename)
@@ -40,7 +40,7 @@ async def upload_xml(file: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        parser = XMLParser(file_path)
+        parser = get_parser(file_path)
         report = parser.parse()
 
         return report.model_dump()

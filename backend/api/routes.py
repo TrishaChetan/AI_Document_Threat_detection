@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 
+from parsers import SUPPORTED_EXTENSIONS
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
@@ -32,10 +33,10 @@ async def start_scan(file: UploadFile = File(...)):
             detail="No file was uploaded."
         )
 
-    if not file.filename.lower().endswith(".xml"):
+    if not file.filename.lower().endswith(SUPPORTED_EXTENSIONS):
         raise HTTPException(
             status_code=400,
-            detail="Only XML files are supported."
+            detail="Only OWASP ZAP .xml or .json reports are supported."
         )
 
     try:

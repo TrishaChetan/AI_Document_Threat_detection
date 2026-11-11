@@ -20,20 +20,20 @@ class XMLParser:
         except etree.XMLSyntaxError as e:
             raise ValueError(f"Invalid XML file: {e}")
 
-        site = root.find("site")
+        # A ZAP report has one <site> per scanned host. Read all of them —
+        # previously only the first was parsed and the rest were dropped.
+        sites = root.findall("site")
 
-        if site is None:
+        if not sites:
             raise ValueError("Invalid OWASP ZAP report: Missing <site> element.")
 
-        alerts_node = site.find("alerts")
-
-        if alerts_node is None:
+        if all(site.find("alerts") is None for site in sites):
             raise ValueError("Invalid OWASP ZAP report: Missing <alerts> element.")
 
-        target = site.get("name", "")
+        target = ", ".join(dict.fromkeys(site.get("name", "") for site in sites if site.get("name")))
         generated = root.get("generated", "")
 
-        alerts = alerts_node.findall("alertitem")
+        alerts = [alert for site in sites for alert in site.findall("alerts/alertitem")]
 
         vulnerabilities = []
 

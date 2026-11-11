@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from ai.recommendation_engine import RecommendationEngine
-from parsers.xml_parser import XMLParser
+from parsers import SUPPORTED_EXTENSIONS, get_parser
 
 router = APIRouter()
 
@@ -34,10 +34,10 @@ async def analyze_xml(file: UploadFile = File(...)):
             detail="No file was uploaded."
         )
 
-    if not file.filename.lower().endswith(".xml"):
+    if not file.filename.lower().endswith(SUPPORTED_EXTENSIONS):
         raise HTTPException(
             status_code=400,
-            detail="Only XML files are allowed."
+            detail="Only OWASP ZAP .xml or .json reports are supported."
         )
 
     start = time.perf_counter()
@@ -50,7 +50,7 @@ async def analyze_xml(file: UploadFile = File(...)):
 
     try:
 
-        parser = XMLParser(temp_path)
+        parser = get_parser(temp_path)
         report = parser.parse()
 
         vulnerabilities = report.vulnerabilities

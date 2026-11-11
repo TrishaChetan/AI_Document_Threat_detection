@@ -11,7 +11,7 @@ function UploadProgress({ loading }) {
 
             <div className="space-y-4">
 
-                <p>✅ Parsing XML Scan</p>
+                <p>✅ Parsing ZAP Report</p>
 
                 <p>✅ Detecting Vulnerabilities</p>
 
