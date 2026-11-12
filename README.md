@@ -116,6 +116,21 @@ Frontend runs at `http://localhost:5173`
 
 ---
 
+## Comparing Two Scans
+
+See what a release fixed, what it introduced and what is still open:
+
+```bash
+cd backend
+python compare_scans.py ../reports/zap/xml/dvwa_scan_01.xml ../reports/zap/xml/dvwa_scan_02.xml
+```
+
+```
+Trend: REGRESSED  ·  4 new (0 High)  ·  1 fixed (0 High)  ·  8 still open  ·  0 changed severity
+```
+
+Findings are matched on title, CWE, URL path and parameter, ignoring host, port and query string, so a re-scan against a different environment still lines up. The command exits with code 1 when the newer scan introduces any High finding, so it can gate a CI pipeline. The same comparison is available as `POST /api/v1/compare` (multipart fields `baseline` and `current`, XML or JSON).
+
 ## Running Tests
 
 From the repository root:
