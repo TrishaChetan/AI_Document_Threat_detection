@@ -131,6 +131,16 @@ Trend: REGRESSED  ·  4 new (0 High)  ·  1 fixed (0 High)  ·  8 still open  ·
 
 Findings are matched on title, CWE, URL path and parameter, ignoring host, port and query string, so a re-scan against a different environment still lines up. The command exits with code 1 when the newer scan introduces any High finding, so it can gate a CI pipeline. The same comparison is available as `POST /api/v1/compare` (multipart fields `baseline` and `current`, XML or JSON).
 
+## Exporting Findings (SARIF / CSV)
+
+```bash
+cd backend
+python export_findings.py ../reports/zap/xml/dvwa_scan_01.xml --format sarif -o zap.sarif
+python export_findings.py report.json --format csv -o findings.csv
+```
+
+**SARIF 2.1.0** is the format GitHub code scanning reads: upload the file (for example with `github/codeql-action/upload-sarif` in a workflow) and every ZAP finding appears in the repository's **Security** tab, ranked by severity with CWE tags and the fix advice. **CSV** is sorted High → Informational with HTML stripped from descriptions, ready for a spreadsheet or ticket import. Also available as `POST /api/v1/export?format=sarif|csv`.
+
 ## Running Tests
 
 From the repository root:
