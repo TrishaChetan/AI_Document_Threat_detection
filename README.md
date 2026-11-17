@@ -141,6 +141,18 @@ python export_findings.py report.json --format csv -o findings.csv
 
 **SARIF 2.1.0** is the format GitHub code scanning reads: upload the file (for example with `github/codeql-action/upload-sarif` in a workflow) and every ZAP finding appears in the repository's **Security** tab, ranked by severity with CWE tags and the fix advice. **CSV** is sorted High → Informational with HTML stripped from descriptions, ready for a spreadsheet or ticket import. Also available as `POST /api/v1/export?format=sarif|csv`.
 
+## Remediation Plan (fix tickets with due dates)
+
+```bash
+cd backend
+python remediation_plan.py ../reports/zap/xml/webgoat_scan_01.xml            # Markdown
+python remediation_plan.py report.json --format csv -o plan.csv --sla high=14,medium=60
+```
+
+Scanners list symptoms; teams fix causes. The plan groups findings that share one fix into a single ticket — CSP, anti-clickjacking and X-Content-Type-Options become *"Add missing HTTP security headers"* in the web-server config; the cookie-flag findings become *"Harden session cookie flags"* — and keeps everything else as one ticket per alert type. Each ticket says where the fix lives (server config or application code), a rough effort (S/M/L), how to fix it, and the affected URLs and CWEs.
+
+Due dates come from a severity SLA counted from the scan date (High 30 days, Medium 90, Low 180 by default; override with `--sla`), and overdue tickets are flagged, most urgent first. Informational findings are left out unless you pass `--include-info`. Also available as `POST /api/v1/remediation-plan?format=json|md|csv`.
+
 ## Running Tests
 
 From the repository root:

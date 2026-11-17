@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse, Response
 
 from parsers import SUPPORTED_EXTENSIONS, parse_report
 from services.findings_export import to_csv, to_sarif
+from services.remediation_plan import build_plan, parse_sla, to_csv as plan_csv, to_markdown
 from services.scan_diff import diff_reports
 
 router = APIRouter(tags=["Compare Scans"])
@@ -49,3 +50,26 @@ async def export_findings(
                         headers={"Content-Disposition": f'attachment; filename="{stem}-findings.csv"'})
     return JSONResponse(to_sarif(scan), media_type="application/sarif+json",
                         headers={"Content-Disposition": f'attachment; filename="{stem}.sarif"'})
+
+
+@router.post("/remediation-plan", summary="Group findings into fix tickets with severity-based due dates")
+async def remediation_plan(
+    report: UploadFile = File(..., description="ZAP .xml or .json report"),
+    format: str = Query("json", pattern="^(json|md|csv)$"),
+    sla: str | None = Query(None, description="days per severity, e.g. high=14,medium=60,low=120"),
+    include_info: bool = Query(False, description="also make tickets for Informational findings"),
+):
+    try:
+        sla_days = parse_sla(sla)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    scan = await _parse_upload(report, "report")
+    plan = build_plan(scan, sla=sla_days, include_info=include_info)
+    stem = Path(report.filename or "report").stem
+    if format == "md":
+        return Response(to_markdown(plan), media_type="text/markdown",
+                        headers={"Content-Disposition": f'attachment; filename="{stem}-remediation.md"'})
+    if format == "csv":
+        return Response(plan_csv(plan), media_type="text/csv",
+                        headers={"Content-Disposition": f'attachment; filename="{stem}-remediation.csv"'})
+    return {"success": True, "plan": plan}
