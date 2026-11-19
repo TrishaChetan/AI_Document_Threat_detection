@@ -141,6 +141,18 @@ python export_findings.py report.json --format csv -o findings.csv
 
 **SARIF 2.1.0** is the format GitHub code scanning reads: upload the file (for example with `github/codeql-action/upload-sarif` in a workflow) and every ZAP finding appears in the repository's **Security** tab, ranked by severity with CWE tags and the fix advice. **CSV** is sorted High → Informational with HTML stripped from descriptions, ready for a spreadsheet or ticket import. Also available as `POST /api/v1/export?format=sarif|csv`.
 
+## Security Gate for CI (pass/fail a build)
+
+```bash
+cd backend
+python scan_gate.py zap.xml                                   # fail on any High finding
+python scan_gate.py zap.xml --fail-on medium --max low=10
+python scan_gate.py zap.xml --baseline last_release.xml        # only NEW findings count
+python scan_gate.py zap.xml --policy ../zap-gate.example.json --github
+```
+
+Turns a scan into a yes/no answer for a pipeline: exit code 0 passes, 1 means the policy was broken, 2 means bad input. A policy file sets the severity that fails on its own, a budget per severity (e.g. at most 5 Medium), and **accepted risks** matched by finding title or `cwe:<id>`. Each accepted risk can carry an `until` date and starts counting again once that date passes, so it can't be forgotten. With `--baseline` only findings that are new, or whose severity went up, count. That lets an existing app adopt the gate without fixing its whole backlog first. `--github` adds error annotations to the run and a summary table to the job page; see `docs/security-gate.github-actions.yml` for a ready workflow that runs a ZAP baseline scan on each pull request.
+
 ## Remediation Plan (fix tickets with due dates)
 
 ```bash

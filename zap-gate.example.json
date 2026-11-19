@@ -1,0 +1,8 @@
+{
+  "fail_on": "High",
+  "max": {"Medium": 5, "Low": 20},
+  "ignore": [
+    {"match": "Cookie No HttpOnly Flag", "until": "2026-12-31", "reason": "session cookie moves to HttpOnly in v2.3"},
+    {"match": "cwe:200", "reason": "version banner is intentional on the public status page"}
+  ]
+}

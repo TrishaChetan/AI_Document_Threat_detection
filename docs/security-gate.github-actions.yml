@@ -1,0 +1,21 @@
+# Example: copy to .github/workflows/security-gate.yml in the app you want to protect.
+# Runs a ZAP baseline scan against your deployed preview and fails the PR if the gate fails.
+name: security-gate
+on: [pull_request]
+jobs:
+  zap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with: {repository: TrishaChetan/AI_Document_Threat_detection, path: gate}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r gate/backend/requirements.txt
+      - name: ZAP baseline scan
+        run: |
+          docker run --rm -v "$PWD:/zap/wrk" -t ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t "${{ vars.PREVIEW_URL }}" -x zap.xml -I
+      - name: Security gate
+        working-directory: gate/backend
+        run: python scan_gate.py "$GITHUB_WORKSPACE/zap.xml" --policy "$GITHUB_WORKSPACE/zap-gate.json" --github
